@@ -1,15 +1,49 @@
-from flask import render_template
-from app import app, dao
-from flask import request
+from app.models import Category, Product, User
+from app import app, db
+import hashlib
 
 
-@app.route("/")
-def index():
-    cates = dao.load_categories()
-    kw = request.args.get('kw')
-    prods = dao.load_products(kw)
-    return render_template('index.html', categories=cates, products=prods)
+def load_categories():
+    return Category.query.order_by('id').all()
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+def load_products(kw: object = None) -> object:
+    products = Product.query
+    if kw:
+        products = products.filter(Product.name.contains(kw))
+    return products.all()
+
+
+def add_user(name, username, password, **kwargs):
+    password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
+    user = User(name=name.strip(),
+                username=username.strip(),
+                password=password,
+                email=kwargs.get('email'),
+                avatar=kwargs.get('avatar'))
+    db.session.add(user)
+    db.session.commit()
+
+
+def check_login(username, password):
+    if username and password:
+        password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
+
+        return User.query.filter(User.username.__eq__(username.strip()),
+                                 User.password.__eq__(password)).first()
+
+
+def get_user_by_id(user_id):
+    return User.query.get(user_id)
+
+
+def count_cart(cart):
+    total_quantity, total_amount = 0, 0
+    if cart:
+        for c in cart.values():
+            total_quantity += c['quantity']
+            total_amount += c['quantity'] * c['price']
+    return {
+        'total_quantity': total_quantity,
+        'total_amount': total_amount
+    }
