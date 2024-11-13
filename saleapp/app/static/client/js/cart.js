@@ -16,7 +16,14 @@ function addToCart(id, name, price){
         return res.json()
     }).then(function(data){
         console.info(data)
+        let counter = document.getElementById('cartCounter')
+        counter.innerText = data.total_quantity
     }).catch(function(err){
         console.error(err)
     })
+}
+
+function pay(){
+    if(confirm('Do you want to pay?')==true){
+    }
 }

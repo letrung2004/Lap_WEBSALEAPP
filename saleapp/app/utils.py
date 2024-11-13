@@ -1,5 +1,6 @@
-from app.models import Category, Product, User
+from app.models import Category, Product, User, Receipt, ReceiptDetail
 from app import app, db
+from flask_login import current_user
 import hashlib
 
 
@@ -47,3 +48,18 @@ def count_cart(cart):
         'total_quantity': total_quantity,
         'total_amount': total_amount
     }
+
+
+def add_receipt(cart):
+    if cart:
+        receipt = Receipt(user=current_user)
+        db.session.add(receipt)
+
+        for c in cart.values():
+            d = ReceiptDetail(receipt=receipt,
+                              product_id=c['id'],
+                              quantity=c['quantity'],
+                              unit_price=c['price'])
+            db.session.add(d)
+
+        db.session.commit()

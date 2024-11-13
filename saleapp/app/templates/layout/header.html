@@ -42,8 +42,8 @@
                     </div>
                     <div class="cart">
 
-                        <a class="fa fa-cart-plus" href=""></a>
-                        <span>(0)</span>
+                        <a class="fa fa-cart-plus" href="{{url_for('cart')}}"></a>
+                        <span id="cartCounter">{{ cart_stats.total_quantity }}</span>
                     </div>
                 </div>
             </div>
