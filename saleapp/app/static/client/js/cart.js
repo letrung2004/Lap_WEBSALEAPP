@@ -25,5 +25,16 @@ function addToCart(id, name, price){
 
 function pay(){
     if(confirm('Do you want to pay?')==true){
+         fetch('/api/pay', {
+            method: 'post'
+        }).then(function(res){
+            return res.json()
+        }).then(function(data){
+            if(data.code == 200){
+                location.reload()
+            }
+        }).catch(function(err){
+            console.error(err)
+        })
     }
 }

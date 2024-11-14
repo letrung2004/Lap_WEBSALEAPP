@@ -67,11 +67,9 @@ def user_signout():
 @app.route('/cart')
 def cart():
     err_msg = ""
-    if 'cart' not in session:
-        session['cart'] = {}
     return render_template('cart.html',
                            err_msg=err_msg,
-                           stats=utils.count_cart(session['cart']))
+                           stats=utils.count_cart(session.get('cart')))
 
 
 @app.route('/api/add-cart', methods=['post'])
@@ -81,7 +79,7 @@ def add_to_cart():
     name = data.get('name')
     price = data.get('price')
 
-    cart = session.get('cart', {})
+    cart = session.get('cart')
     if not cart:
         cart = {}
     if id in cart:
@@ -100,12 +98,9 @@ def add_to_cart():
 
 @app.context_processor
 def common_response():
-    # Kiểm tra xem 'cart' có trong session không, nếu không thì khởi tạo nó
-    if 'cart' not in session:
-        session['cart'] = {}  # Khởi tạo giỏ hàng là dictionary rỗng
     return {
         'categories': utils.load_categories(),
-        'cart_stats': utils.count_cart(session['cart'])
+        'cart_stats': utils.count_cart(session.get('cart'))
     }
 
 
@@ -113,10 +108,11 @@ def common_response():
 def pay():
     try:
         utils.add_receipt(session.get('cart'))
+        del session['cart']
     except:
-        return jsonify({'code': 200})
+        return jsonify({'code': 400})
 
-    return jsonify({'code': 400})
+    return jsonify({'code': 200})
 
 
 if __name__ == '__main__':
