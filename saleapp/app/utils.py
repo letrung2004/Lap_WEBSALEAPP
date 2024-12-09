@@ -1,17 +1,17 @@
-from app.models import Category, Product, User, Receipt, ReceiptDetail
+from app.models import BookCategory, Book, User, Receipt, ReceiptDetail
 from app import app, db
 from flask_login import current_user
 import hashlib
 
 
-def load_categories():
-    return Category.query.order_by('id').all()
+def load_book_categories():
+    return BookCategory.query.order_by('id').all()
 
 
-def load_products(kw: object = None) -> object:
-    products = Product.query
+def load_books(kw: object = None) -> object:
+    products = Book.query
     if kw:
-        products = products.filter(Product.name.contains(kw))
+        products = products.filter(Book.name.contains(kw))
     return products.all()
 
 

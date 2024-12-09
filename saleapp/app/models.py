@@ -31,23 +31,24 @@ class User(BaseModel, UserMixin):
         return self.name
 
 
-class Category(BaseModel):
+class BookCategory(BaseModel):
     name = Column(String(50), nullable=False, unique=True)
-    products = relationship('Product', backref='category', lazy=True)
+    books = relationship('Book', backref='category', lazy=True)
 
     def __str__(self):
         return self.name
 
 
-class Product(BaseModel):
-    name = Column(String(50), nullable=False, unique=False)
+class Book(BaseModel):
+    name = Column(String(50), nullable=False)
+    author = Column(String(50), nullable=False)
     description = Column(String(250))
     price = Column(Float, default=0)
     image = Column(String(250), nullable=True)
     active = Column(Boolean, default=True)
     created_date = Column(DateTime, default=datetime.now())
-    category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
-    receipt_details = relationship('ReceiptDetail', backref='product', lazy=True)
+    category_id = Column(Integer, ForeignKey(BookCategory.id), nullable=False)
+    receipt_details = relationship('ReceiptDetail', backref='book', lazy=True)
 
     def __str__(self):
         return self.name
@@ -61,7 +62,7 @@ class Receipt(BaseModel):
 
 class ReceiptDetail(db.Model):
     receipt_id = Column(Integer, ForeignKey(Receipt.id), nullable=False, primary_key=True)
-    product_id = Column(Integer, ForeignKey(Product.id), nullable=False, primary_key=True)
+    product_id = Column(Integer, ForeignKey(Book.id), nullable=False, primary_key=True)
     quantity = Column(Integer, default=0)
     unit_price = Column(Float, default=0)
 

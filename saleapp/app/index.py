@@ -8,7 +8,7 @@ from flask_login import login_user, logout_user
 @app.route("/")
 def index():
     kw = request.args.get('kw')
-    prods = utils.load_products(kw)
+    prods = utils.load_books(kw)
     return render_template('index.html', products=prods)
 
 
@@ -99,7 +99,7 @@ def add_to_cart():
 @app.context_processor
 def common_response():
     return {
-        'categories': utils.load_categories(),
+        'categories': utils.load_book_categories(),
         'cart_stats': utils.count_cart(session.get('cart'))
     }
 
