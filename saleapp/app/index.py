@@ -115,6 +115,14 @@ def pay():
     return jsonify({'code': 200})
 
 
+@app.route('/all-product')
+def product_list():
+    err_msg = ""
+    return render_template('product_list.html',
+                           err_msg=err_msg,
+                           stats=utils.count_cart(session.get('cart')))
+
+
 if __name__ == '__main__':
     from app.admin import *
 
